@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="Blog">
+	<property environment="env" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="tomcat.home" value="C:\Program Files\Apache Software Foundation\Tomcat 5.5" />
+	<path id="Web App Libraries.libraryclasspath">
+		<pathelement location="WebContent/WEB-INF/lib/commons-fileupload-1.2.2.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/commons-io-2.0.1.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/commons-lang3-3.1.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/commons-logging-1.1.1.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/commons-logging-api-1.1.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/freemarker-2.3.19.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/javassist-3.11.0.GA.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/ognl-3.0.6.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/struts2-core-2.3.12.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/xwork-core-2.3.12.jar" />
+	</path>
+	<path id="EAR Libraries.libraryclasspath" />
+	<path id="Blog.classpath">
+		<pathelement location="build/classes" />
+		<path refid="Web App Libraries.libraryclasspath" />
+		<path refid="EAR Libraries.libraryclasspath" />
+	</path>
+	<target name="init">
+		<mkdir dir="build/classes" />
+		<copy includeemptydirs="false" todir="build/classes">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="build/classes">
+			<fileset dir="resources">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="build/classes" />
+		<delete dir="${tomcat.home}\webapps\blog" />
+		<delete file="${tomcat.home}\webapps\blog.war" />
+	</target>
+	<target depends="init" name="build">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false">
+			<src path="src" />
+			<src path="resources" />
+			<classpath refid="Blog.classpath" />
+		</javac>
+	</target>
+
+	<target name="create" depends="build">
+		<war destfile="blog.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+			<classes dir="build\classes" />
+			<fileset dir="WebContent">
+				<exclude name="WEB-INF/web.xml" />
+			</fileset>
+		</war>
+	</target>
+	<target name="copy">
+		<copy todir="${tomcat.home}\webapps" overwrite="true">
+			<fileset dir=".">
+				<include name="*.war" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="deploy">
+		<antcall target="tomcat-stop"/>
+		<antcall target="clean"/>
+		<antcall target="create" />
+		<antcall target="copy" />
+		<antcall target="tomcat-start"/>
+	</target>
+	
+	<target name="tomcat-start">
+		<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+			<jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+		</java>
+	</target>
+	
+	<target name="tomcat-stop">
+		<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+			<jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+				<arg line="stop"/>
+		</java>
+	</target>
+</project>
