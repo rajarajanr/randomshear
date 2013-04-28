@@ -37,19 +37,19 @@
 		</copy>
 	</target>
 	<target name="clean">
-		<delete dir="build/classes" />
+		<!--delete dir="build/classes" /-->
 		<delete dir="${tomcat.home}\webapps\blog" />
 		<delete file="${tomcat.home}\webapps\blog.war" />
 	</target>
 	<target depends="init" name="build">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}">
 			<src path="src" />
 			<src path="resources" />
 			<classpath refid="Blog.classpath" />
 		</javac>
 	</target>
 
-	<target name="create" depends="build">
+	<target name="create">
 		<war destfile="blog.war" webxml="WebContent/WEB-INF/web.xml" update="true">
 			<classes dir="build\classes" />
 			<fileset dir="WebContent">
@@ -65,23 +65,28 @@
 		</copy>
 	</target>
 	<target name="deploy">
-		<antcall target="tomcat-stop"/>
-		<antcall target="clean"/>
+		<antcall target="tomcat-stop" />
+		<antcall target="clean" />
 		<antcall target="create" />
 		<antcall target="copy" />
-		<antcall target="tomcat-start"/>
+		<antcall target="tomcat-start" />
 	</target>
-	
+
 	<target name="tomcat-start">
 		<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
-			<jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 		</java>
 	</target>
-	
+
 	<target name="tomcat-stop">
 		<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
-			<jvmarg value="-Dcatalina.home=${tomcat.home}"/>
-				<arg line="stop"/>
+			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
+			<arg line="stop" />
 		</java>
+	</target>
+
+	<target name="restart-tomcat">
+		<antcall target="tomcat-stop" />
+		<antcall target="tomcat-start" />
 	</target>
 </project>

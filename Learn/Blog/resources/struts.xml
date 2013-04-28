@@ -2,18 +2,34 @@
 <!DOCTYPE struts PUBLIC "-//Apacje Software Foundation//DTD Struts Configuration 2.0//EN"
 "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
-<constant name="struts.devMode" value="true"/>
-<package name="helloWorld" extends="struts-default">
-<!-- action name="hello" class="HelloWorldAction" method="execute">
-<result name="success">/HelloWorld.jsp</result>
-</action-->
-<action name="loginAction" class="com.struts2.blog.LoginAction" method="execute">
-<result name="success">/Welcome.jsp</result>
-<result name="failure">/Error.jsp</result>
-</action>
-<!-- <action name="registerAction" class="LoginAction" method="register">
-<result name="success">/Welcome.jsp</result>
-<result name="failure">/Error.jsp</result>
-</action>-->
-</package>
+	<constant name="struts.devMode" value="true" />
+	<package name="helloWorld" extends="struts-default">
+		<!-- Interceptors -->
+		<interceptors>
+			<interceptor name="loginInterceptor" class="com.struts2.blog.LoginInterceptor"></interceptor>
+			<interceptor-stack name="loginStack">
+				<interceptor-ref name="loginInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+
+		<global-results>
+			<result name="login">/Login.jsp</result>
+		</global-results>
+		
+		<!--Actions -->
+		<action name="loginAction" class="com.struts2.blog.LoginAction"
+			method="execute">
+			<result name="success">/Welcome.jsp</result>
+			<result name="failure">/Error.jsp</result>
+			<result name="logoutsuccess">/Login.jsp</result>
+		</action>
+		
+		<action name="dashboardAction">
+		<result name="success">/Dashboard.jsp</result>
+		</action>
+		<!-- <action name="registerAction" class="LoginAction" method="register"> 
+			<result name="success">/Welcome.jsp</result> <result name="failure">/Error.jsp</result> 
+			</action> -->
+	</package>
 </struts>

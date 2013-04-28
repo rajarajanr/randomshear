@@ -7,7 +7,6 @@
 <title>Login Successful</title>
 </head>
 <body>
-<struts:include value="CommonForm.jsp"> </struts:include>
 <H1>Welcome!!!</H1>
 <a href="dashboardAction">Dashboard</a>
 </body>
