@@ -37,7 +37,7 @@
 		</copy>
 	</target>
 	<target name="clean">
-		<!--delete dir="build/classes" /-->
+		<delete dir="build/classes" />
 		<delete dir="${tomcat.home}\webapps\blog" />
 		<delete file="${tomcat.home}\webapps\blog.war" />
 	</target>
@@ -66,7 +66,9 @@
 	</target>
 	<target name="deploy">
 		<antcall target="tomcat-stop" />
+		<sleep seconds="4"/>
 		<antcall target="clean" />
+		<antcall target="build"/>
 		<antcall target="create" />
 		<antcall target="copy" />
 		<antcall target="tomcat-start" />

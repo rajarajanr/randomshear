@@ -10,6 +10,9 @@ import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+import com.opensymphony.xwork2.Action;
+
+@SuppressWarnings("unchecked")
 public class LoginAction implements SessionAware {
 	private String username;
 	private String password;
@@ -50,7 +53,7 @@ public class LoginAction implements SessionAware {
 		}
 
 		System.out.println("returning failure from execute");
-		return "failure";
+		return Action.ERROR;
 	}
 
 	public String login() {
@@ -59,11 +62,11 @@ public class LoginAction implements SessionAware {
 				&& (loginInfo.get(this.username).equals(this.password))) {
 			System.out.println("returning success");
 			session.put("username", username.toUpperCase());
-			return "success";
+			return Action.SUCCESS;
 		}
 
 		System.out.println("returning failure");
-		return "failure";
+		return Action.ERROR;
 	}
 
 	public String register() {
@@ -72,7 +75,7 @@ public class LoginAction implements SessionAware {
 				&& (this.password != null) && (!this.password.isEmpty())) {
 			if (loginInfo.containsKey(this.username)) {
 				System.out.println("returning failure inside loop");
-				return "failure";
+				return Action.ERROR;
 			}
 			loginInfo.put(this.username, this.password);
 			try {
@@ -86,10 +89,10 @@ public class LoginAction implements SessionAware {
 			}
 			session.put("username", username.toUpperCase());
 			System.out.println("returning success");
-			return "success";
+			return Action.SUCCESS;
 		}
 		System.out.println("returning failure");
-		return "failure";
+		return Action.ERROR;
 	}
 
 	public String logout() {

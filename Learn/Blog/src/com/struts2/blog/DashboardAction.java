@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+import com.opensymphony.xwork2.Action;
+
 public class DashboardAction implements SessionAware {
 	String username;
 	private Map<String, Object> session;
@@ -23,6 +25,6 @@ public class DashboardAction implements SessionAware {
 
 	public String dashboard() {
 		this.username = (String) session.get("username");
-		return "success";
+		return Action.SUCCESS;
 	}
 }

@@ -9,12 +9,12 @@
 <body>
 <H1>Login Page</H1>
 <form action ="loginAction" method="get">
-<label for="username">Username</label>
-<input type="text" name="username"/>
-<label for="password">Password</label>
-<input type="password" name="password"/>
-<input type ="submit" name="button" value="login">
-<input type="submit" name="button" value="register">
+<struts:label for="username" value="Username"/>
+<struts:textfield name="username"/>
+<struts:label for="password" value="Password"/>
+<struts:password name="password"/>
+<struts:submit type ="submit" name="button" value="Login" align="left"/>
+<struts:submit name="button" value="Register" align="left"/>
 </form>
 </body>
 </html>
