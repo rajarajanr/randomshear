@@ -6,9 +6,7 @@
 <body>
 	<form action="loginAction" method="get">
 		<struts:div cssStyle="text-align:right;">
-			<struts:label>
-				<struts:property value="%{#session.username}" />
-			</struts:label>
+			<struts:label value="Welcome <struts:property value="%{#session.username}" />"/>
 			<input type ="submit" name="button" value="logout">
 		</struts:div>
 	</form>
