@@ -5,13 +5,20 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.thoughtworks.sample.conf.track.api.ConfTrackerAPI;
 import com.thoughtworks.sample.conf.track.api.models.Topic;
+import com.thoughtworks.sample.conf.track.api.models.Track;
+import com.thoughtworks.sample.conf.track.impl.ConfTrackerImpl;
 
 public class ConfTrackerTest {
 
 	@Test
 	public void getTrackInfoTest() throws Exception {
 
+		ConfTrackerAPI API = new ConfTrackerImpl();
+		List<Track> output = API.getTrackInfo(prepareInputs());
+		// Assert.assertNotNull(output);
+		// Assert.assertTrue(output.size() > 0);
 	}
 
 	private List<Topic> prepareInputs() {
@@ -23,7 +30,7 @@ public class ConfTrackerTest {
 		topics.add(new Topic("Ruby Errors from Mismathed Gem V", 45));
 		topics.add(new Topic("Common Ruby Error", 45));
 		topics.add(new Topic("Rails for Python Developers", Topic.LIGHTNING));
-		topics.add(new Topic("Communicating over Over Distance", 6));
+		topics.add(new Topic("Communicating over Over Distance", 60));
 		topics.add(new Topic("Accounting Driven Developement", 45));
 		topics.add(new Topic("Woah", 30));
 		topics.add(new Topic("Sit down and write", 30));
