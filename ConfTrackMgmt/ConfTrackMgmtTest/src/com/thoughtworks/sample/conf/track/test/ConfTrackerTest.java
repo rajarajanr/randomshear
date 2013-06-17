@@ -3,9 +3,16 @@ package com.thoughtworks.sample.conf.track.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
 import com.thoughtworks.sample.conf.track.api.models.Topic;
 
 public class ConfTrackerTest {
+
+	@Test
+	public void getTrackInfoTest() throws Exception {
+
+	}
 
 	private List<Topic> prepareInputs() {
 
