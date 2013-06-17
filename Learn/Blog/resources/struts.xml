@@ -3,30 +3,33 @@
 "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<constant name="struts.devMode" value="true" />
-	<package name="helloWorld" extends="struts-default">
+	<package name="blog" extends="struts-default">
 		<!-- Interceptors -->
 		<interceptors>
 			<interceptor name="loginInterceptor" class="com.struts2.blog.LoginInterceptor"></interceptor>
-			<interceptor-stack name="loginStack">
-				<interceptor-ref name="loginInterceptor" />
-				<interceptor-ref name="defaultStack" />
-			</interceptor-stack>
+			<interceptor-stack name="customDefaultStack">
+                <interceptor-ref name="loginInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
 		</interceptors>
+		<default-interceptor-ref name="customDefaultStack"/>
 
 		<global-results>
-			<result name="login">/Login.jsp</result>
+			<result name="login">/pages/Login.jsp</result>
 		</global-results>
+		
 		
 		<!--Actions -->
 		<action name="loginAction" class="com.struts2.blog.LoginAction"
 			method="execute">
-			<result name="success">/Welcome.jsp</result>
-			<result name="error">/Error.jsp</result>
-			<result name="logoutsuccess">/Login.jsp</result>
+			<!-- interceptor-ref name="customDefaultStack"></interceptor-ref-->
+			<result name="success">/pages/Welcome.jsp</result>
+			<result name="error">/pages/Error.jsp</result>
+			<result name="logoutsuccess">/pages/Login.jsp</result>
 		</action>
 		
 		<action name="dashboardAction">
-		<result name="success">/Dashboard.jsp</result>
+		<result name="success">/pages/Dashboard.jsp</result>
 		</action>
 		<!-- <action name="registerAction" class="LoginAction" method="register"> 
 			<result name="success">/Welcome.jsp</result> <result name="failure">/Error.jsp</result> 

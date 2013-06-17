@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.Action;
@@ -98,6 +99,10 @@ public class LoginAction implements SessionAware {
 	public String logout() {
 		System.out.println("entering logout");
 		session.remove("username");
+		if (session instanceof SessionMap<?, ?>) {
+			System.out.println("Invalidating the session");
+			((SessionMap<?, ?>) session).invalidate();
+		}
 		return "logoutsuccess";
 	}
 

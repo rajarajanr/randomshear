@@ -16,6 +16,10 @@
 		<pathelement location="WebContent/WEB-INF/lib/ognl-3.0.6.jar" />
 		<pathelement location="WebContent/WEB-INF/lib/struts2-core-2.3.12.jar" />
 		<pathelement location="WebContent/WEB-INF/lib/xwork-core-2.3.12.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/antlr-2.7.2.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/asm-3.3.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/asm-commons-3.3.jar" />
+		<pathelement location="WebContent/WEB-INF/lib/struts2-convention-plugin-2.3.12.jar" />
 	</path>
 	<path id="EAR Libraries.libraryclasspath" />
 	<path id="Blog.classpath">
@@ -37,7 +41,7 @@
 		</copy>
 	</target>
 	<target name="clean">
-		<delete dir="build/classes" />
+		<!--delete dir="build/classes" /-->
 		<delete dir="${tomcat.home}\webapps\blog" />
 		<delete file="${tomcat.home}\webapps\blog.war" />
 	</target>
@@ -68,7 +72,7 @@
 		<antcall target="tomcat-stop" />
 		<sleep seconds="4"/>
 		<antcall target="clean" />
-		<antcall target="build"/>
+		<!--antcall target="build"/-->
 		<antcall target="create" />
 		<antcall target="copy" />
 		<antcall target="tomcat-start" />

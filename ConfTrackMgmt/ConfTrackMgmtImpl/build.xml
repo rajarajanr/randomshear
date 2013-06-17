@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ConfTrackMgmtImpl.xml" default="libjar">
+	<property environment="env" />
+	<property name="FQ_JAVAAPI_DIR" value="${env.FQ_JAVAAPI_DIR}" />
+	<path id="jarpath">
+		<pathelement location="${basedir}/../ConfTrackMgmtAPI/Build" />
+	</path>
+	<target name="clean">
+		<delete dir="Build" />
+	</target>
+
+	<target name="builddep">
+	</target>
+
+	<target name="build" depends="builddep">
+		<mkdir dir="Build" />
+		<javac srcdir="src" destdir="Build" debug="on" debuglevel="lines,source,vars">
+			<classpath refid="jarpath" />
+		</javac>
+	</target>
+
+	<target name="libjar" depends="build">
+		<jar jarfile="Build/ConfTrackMgmtImpl.jar">
+			<fileset dir="Build" excludes="*.jar" />
+		</jar>
+	</target>
+</project>

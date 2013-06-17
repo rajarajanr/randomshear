@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ConfTrackMgmyAPI.xml" default="libjar">
+	<target name="clean">
+		<delete dir="Build" />
+	</target>
+
+	<target name="builddep">
+	</target>
+
+	<target name="build" depends="builddep">
+		<mkdir dir="Build" />
+		<javac srcdir="src" destdir="Build" debug="on" debuglevel="lines,source,vars">
+		</javac>
+	</target>
+
+	<target name="libjar" depends="build">
+		<jar jarfile="Build/ConfTrackMgmyAPI.jar">
+			<fileset dir="Build" excludes="*.jar" />
+		</jar>
+	</target>
+</project>
