@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.thoughtworks.sample.conf.track.api.ConfTrackerAPI;
 import com.thoughtworks.sample.conf.track.api.exceptions.ConfTrackerException;
+import com.thoughtworks.sample.conf.track.api.exceptions.InvaildArgumentException;
 import com.thoughtworks.sample.conf.track.api.models.Topic;
 import com.thoughtworks.sample.conf.track.api.models.Track;
 
@@ -22,11 +23,17 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 	private static final int VALID_TRACK_MAX_DUR = MORNING_SESS_DUR
 			+ MAX_EVE_SESS_DUR;
 	private static Integer TOTAL_INPUT_TIME = 0;
+	private static Integer BUFFER_TIME = VALID_TRACK_MAX_DUR
+			- VALID_TRACK_MIN_DUR;
 
 	@Override
 	public List<Track> getTrackInfo(List<Topic> topics)
 			throws ConfTrackerException {
 
+		if (topics == null || topics.isEmpty()) {
+			throw new InvaildArgumentException(
+					"Input list is either null or empty");
+		}
 		for (Topic topic : topics) {
 			System.out.println(topic.toString());
 			TOTAL_INPUT_TIME = TOTAL_INPUT_TIME + topic.getDuration();
@@ -44,8 +51,23 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 
 		System.out.println("MIN Track : <" + minTrack + "> MIN Track Rem :<"
 				+ minTrackRem + ">");
-
+		initialFaliureCheck(minTrack, minTrackRem, maxTrack, maxTrackRem);
 		return null;
+	}
+
+	private void initialFaliureCheck(int minTrack, int minTrackRem,
+			int maxTrack, int maxTrackRem) throws ConfTrackerException {
+		// Not a single track can be completed..
+		if (maxTrack < 1) {
+			throw new ConfTrackerException("No track can be created.");
+		}
+		// Incomplete track
+		if (maxTrackRem < VALID_TRACK_MIN_DUR
+				&& minTrackRem > (minTrack * BUFFER_TIME)
+				&& minTrackRem < VALID_TRACK_MIN_DUR) {
+			throw new ConfTrackerException("One of track can not be completed.");
+		}
+
 	}
 
 	@Override
