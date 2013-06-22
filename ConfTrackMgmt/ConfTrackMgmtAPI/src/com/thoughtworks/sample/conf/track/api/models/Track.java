@@ -23,7 +23,7 @@ public class Track {
 		return morningBucket;
 	}
 
-	public void prepateMorningBucket(List<Topic> morningBucket) {
+	public void setMorningBucket(List<Topic> morningBucket) {
 		this.morningBucket = morningBucket;
 	}
 
@@ -31,7 +31,7 @@ public class Track {
 		return eveningBucket;
 	}
 
-	public void prepareEveningBucket(List<Topic> eveningBucket) {
+	public void setEveningBucket(List<Topic> eveningBucket) {
 		this.eveningBucket = eveningBucket;
 	}
 

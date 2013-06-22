@@ -1,5 +1,6 @@
 package com.thoughtworks.sample.conf.track.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.thoughtworks.sample.conf.track.api.ConfTrackerAPI;
@@ -51,7 +52,58 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 
 		System.out.println("MIN Track : <" + minTrack + "> MIN Track Rem :<"
 				+ minTrackRem + ">");
+		// quick failure checks
 		initialFaliureCheck(minTrack, minTrackRem, maxTrack, maxTrackRem);
+
+		// for min to max possible tracks
+		// try to form tracks
+		boolean validSolutionFound = false;
+		List<Track> validTracks = new ArrayList<Track>();
+		for (int numTrack = minTrack; (numTrack <= maxTrack && !validSolutionFound); numTrack++) {
+			validSolutionFound = prepareTracks(numTrack, topics, validTracks);
+		}
+		if (!validSolutionFound) {
+			throw new ConfTrackerException("No Valid Tracks could be created");
+		}
+		return validTracks;
+	}
+
+	private boolean prepareTracks(int numTrack, List<Topic> topics,
+			List<Track> validTracks) {
+
+		List<List<Topic>> morningBuckets = prepareMorningBuckets(numTrack,
+				topics);
+		if (null == morningBuckets) {
+			return false;
+		}
+		List<List<Topic>> eveningBuckets = prepareEveningBuckets(numTrack,
+				topics);
+		if (null == eveningBuckets) {
+			return false;
+		}
+		if (0 == topics.size()) {
+			for (int index = 0; index < numTrack; index++) {
+				Track track = new Track();
+				track.setMorningBucket(morningBuckets.get(index));
+				track.setEveningBucket(eveningBuckets.get(index));
+				validTracks.add(track);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	private List<List<Topic>> prepareMorningBuckets(int numTrack,
+			List<Topic> topics) {
+		List<Topic> morningBucket = prepareMorningBucket(topics);
+		return null;
+	}
+
+	private List<Topic> prepareMorningBucket(List<Topic> topics) {
+		int totalTime = 0;
+		int diff = MORNING_SESS_DUR - totalTime;
+
 		return null;
 	}
 
