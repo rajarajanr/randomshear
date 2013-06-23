@@ -36,7 +36,7 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 					"Input list is either null or empty");
 		}
 		for (Topic topic : topics) {
-			System.out.println(topic.toString());
+			// System.out.println(topic.toString());
 			TOTAL_INPUT_TIME = TOTAL_INPUT_TIME + topic.getDuration();
 			System.out.println("TOTAL: " + TOTAL_INPUT_TIME);
 
@@ -60,7 +60,10 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 		boolean validSolutionFound = false;
 		List<Track> validTracks = new ArrayList<Track>();
 		for (int numTrack = minTrack; (numTrack <= maxTrack && !validSolutionFound); numTrack++) {
-			validSolutionFound = prepareTracks(numTrack, topics, validTracks);
+			List<Topic> tempTopics = new ArrayList<Topic>();
+			tempTopics.addAll(topics);
+			validSolutionFound = prepareTracks(numTrack, tempTopics,
+					validTracks);
 		}
 		if (!validSolutionFound) {
 			throw new ConfTrackerException("No Valid Tracks could be created");
@@ -76,10 +79,17 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 		if (null == morningBuckets) {
 			return false;
 		}
+		List<Topic> tempList = new ArrayList<Topic>();
+		tempList.addAll(topics);
 		List<List<Topic>> eveningBuckets = prepareEveningBuckets(numTrack,
-				topics);
+				tempList, MIN_EVE_SESS_DUR);
 		if (null == eveningBuckets) {
 			return false;
+		}
+		if (eveningBuckets.isEmpty()) {
+			eveningBuckets = null;
+			eveningBuckets = prepareEveningBuckets(numTrack, topics,
+					MAX_EVE_SESS_DUR);
 		}
 		if (0 == topics.size()) {
 			for (int index = 0; index < numTrack; index++) {
@@ -89,24 +99,79 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 				validTracks.add(track);
 			}
 			return true;
+		} else {
+			for (Topic topic : tempList) {
+				topics.remove(topic);
+			}
 		}
 
 		return false;
 	}
 
+	private List<List<Topic>> prepareEveningBuckets(int numTrack,
+			List<Topic> topics, int target) {
+
+		List<List<Topic>> result = new ArrayList<List<Topic>>();
+		for (int i = 0; i < numTrack; i++) {
+			List<Topic> eveningBucket = ConfTrackUtil.prepareSingleBucket(
+					topics, target, false);
+			if (eveningBucket != null && !eveningBucket.isEmpty()) {
+				// added the successful morning session to the list of
+				// successful morning session.
+				result.add(eveningBucket);
+				// removed the already calculated items from the main topics
+				// list. So that on the next run it should try to form a
+				// successful bucket based on th rest of topic list.
+				for (Topic topic : eveningBucket) {
+					topics.remove(topic);
+				}
+			}
+		}
+		int remainingTime = 0;
+		if (topics.size() > 0) {
+			for (Topic topic : topics) {
+				remainingTime += topic.getDuration();
+			}
+		}
+		if (numTrack * BUFFER_TIME == remainingTime) {
+			return new ArrayList<List<Topic>>();
+		} else if (result.size() == numTrack) {
+			return result;
+		} else {
+			return null;
+		}
+
+	}
+
 	private List<List<Topic>> prepareMorningBuckets(int numTrack,
 			List<Topic> topics) {
-		List<Topic> morningBucket = prepareMorningBucket(topics);
-		return null;
+		List<List<Topic>> result = new ArrayList<List<Topic>>();
+		for (int i = 0; i < numTrack; i++) {
+			List<Topic> morningBucket = ConfTrackUtil.prepareSingleBucket(
+					topics, MORNING_SESS_DUR, true);
+			if (morningBucket != null && !morningBucket.isEmpty()) {
+				// added the successful morning session to the list of
+				// successful morning session.
+				result.add(morningBucket);
+				// removed the already calculated items from the main topics
+				// list. So that on the next run it should try to form a
+				// successful bucket based on th rest of topic list.
+				for (Topic topic : morningBucket) {
+					topics.remove(topic);
+				}
+			}
+		}
+		if (result.size() == numTrack) {
+			return result;
+		} else {
+			return null;
+		}
 	}
 
-	private List<Topic> prepareMorningBucket(List<Topic> topics) {
-		int totalTime = 0;
-		int diff = MORNING_SESS_DUR - totalTime;
-
-		return null;
-	}
-
+	/**
+	 * This is an utility method to make a initial check with the input for
+	 * validity.
+	 */
 	private void initialFaliureCheck(int minTrack, int minTrackRem,
 			int maxTrack, int maxTrackRem) throws ConfTrackerException {
 		// Not a single track can be completed..
@@ -114,9 +179,9 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 			throw new ConfTrackerException("No track can be created.");
 		}
 		// Incomplete track
-		if (maxTrackRem < VALID_TRACK_MIN_DUR
-				&& minTrackRem > (minTrack * BUFFER_TIME)
-				&& minTrackRem < VALID_TRACK_MIN_DUR) {
+		if (minTrackRem < VALID_TRACK_MIN_DUR
+				&& maxTrackRem > (minTrack * BUFFER_TIME)
+				&& maxTrackRem < VALID_TRACK_MIN_DUR) {
 			throw new ConfTrackerException("One of track can not be completed.");
 		}
 
