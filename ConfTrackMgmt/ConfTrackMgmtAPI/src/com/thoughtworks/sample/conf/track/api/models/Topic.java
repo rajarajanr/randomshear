@@ -32,9 +32,10 @@ public class Topic {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Topic [title=");
-		builder.append(title);
-		builder.append(", duration=");
+		// builder.append("Topic [title=");
+		// builder.append(title);
+		// builder.append(", duration=");
+		builder.append("[");
 		builder.append(duration);
 		builder.append("]");
 		return builder.toString();

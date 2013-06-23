@@ -17,7 +17,8 @@ public class ConfTrackerTest {
 
 		ConfTrackerAPI API = new ConfTrackerImpl();
 		List<Track> output = API.getTrackInfo(prepareInputs());
-		System.out.println("FINAL Output:" + output);
+		API.displayTrackInfo(output);
+		// System.out.println("FINAL Output:" + output);
 		// Assert.assertNotNull(output);
 		// Assert.assertTrue(output.size() > 0);
 	}

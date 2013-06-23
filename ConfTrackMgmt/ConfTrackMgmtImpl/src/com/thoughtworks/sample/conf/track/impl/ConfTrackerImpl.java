@@ -36,22 +36,20 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 					"Input list is either null or empty");
 		}
 		for (Topic topic : topics) {
-			// System.out.println(topic.toString());
 			TOTAL_INPUT_TIME = TOTAL_INPUT_TIME + topic.getDuration();
-			System.out.println("TOTAL: " + TOTAL_INPUT_TIME);
-
 		}
+		System.out.println("TOTAL: " + TOTAL_INPUT_TIME);
 
-		System.out.println("Total I/P time ::" + TOTAL_INPUT_TIME);
+		// System.out.println("Total I/P time ::" + TOTAL_INPUT_TIME);
 		int maxTrack = TOTAL_INPUT_TIME / VALID_TRACK_MIN_DUR;
 		int maxTrackRem = TOTAL_INPUT_TIME % VALID_TRACK_MIN_DUR;
-		System.out.println("MAX Track : <" + maxTrack + "> MAX Track Rem :<"
-				+ maxTrackRem + ">");
+		// System.out.println("MAX Track : <" + maxTrack + "> MAX Track Rem :<"
+		// + maxTrackRem + ">");
 		int minTrack = TOTAL_INPUT_TIME / VALID_TRACK_MAX_DUR;
 		int minTrackRem = TOTAL_INPUT_TIME % VALID_TRACK_MAX_DUR;
 
-		System.out.println("MIN Track : <" + minTrack + "> MIN Track Rem :<"
-				+ minTrackRem + ">");
+		// System.out.println("MIN Track : <" + minTrack + "> MIN Track Rem :<"
+		// + minTrackRem + ">");
 		// quick failure checks
 		initialFaliureCheck(minTrack, minTrackRem, maxTrack, maxTrackRem);
 
@@ -59,6 +57,10 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 		// try to form tracks
 		boolean validSolutionFound = false;
 		List<Track> validTracks = new ArrayList<Track>();
+
+		System.out
+				.println("Begin..\n -->computed that the number of tracks should be between <"
+						+ minTrack + "> and <" + maxTrack + "> ..");
 		for (int numTrack = minTrack; (numTrack <= maxTrack && !validSolutionFound); numTrack++) {
 			List<Topic> tempTopics = new ArrayList<Topic>();
 			tempTopics.addAll(topics);
@@ -73,24 +75,32 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 
 	private boolean prepareTracks(int numTrack, List<Topic> topics,
 			List<Track> validTracks) {
-
+		System.out.println("\nAttempting to create <" + numTrack
+				+ "> track(s) ");
 		List<List<Topic>> morningBuckets = prepareMorningBuckets(numTrack,
 				topics);
+		System.out.println("morning buckets prepared :::" + morningBuckets);
 		if (null == morningBuckets) {
 			return false;
 		}
-		List<Topic> tempList = new ArrayList<Topic>();
-		tempList.addAll(topics);
+
 		List<List<Topic>> eveningBuckets = prepareEveningBuckets(numTrack,
-				tempList, MIN_EVE_SESS_DUR);
+				topics, MIN_EVE_SESS_DUR);
+		System.out.println("evening buckets prepared :::" + eveningBuckets
+				+ "\n##remaining talks <" + topics.size() + ">##"
+				+ (topics.size() == 0 ? "Bingo!!\n...Done" : "not good..."));
 		if (null == eveningBuckets) {
 			return false;
 		}
-		if (eveningBuckets.isEmpty()) {
-			eveningBuckets = null;
-			eveningBuckets = prepareEveningBuckets(numTrack, topics,
-					MAX_EVE_SESS_DUR);
+
+		if (topics.size() > 0) {
+			prepareTopUps(eveningBuckets, topics);
+			System.out.println("evening buckets after topups:::"
+					+ eveningBuckets + "\n##remaining talks <" + topics.size()
+					+ ">##"
+					+ (topics.size() == 0 ? "Bingo!!\n...Done" : "not Good"));
 		}
+
 		if (0 == topics.size()) {
 			for (int index = 0; index < numTrack; index++) {
 				Track track = new Track();
@@ -99,13 +109,33 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 				validTracks.add(track);
 			}
 			return true;
-		} else {
-			for (Topic topic : tempList) {
+		}
+
+		return false;
+	}
+
+	private void prepareTopUps(List<List<Topic>> eveningBuckets,
+			List<Topic> topics) {
+		for (int i = 0; i < eveningBuckets.size(); i++) {
+			int totalDuration = 0;
+			for (Topic topic : eveningBuckets.get(i)) {
+				totalDuration += topic.getDuration();
+			}
+			int remainDur = MAX_EVE_SESS_DUR - totalDuration;
+			List<Topic> buffer = new ArrayList<Topic>();
+			for (Topic topic : topics) {
+				if (topic.getDuration() < remainDur) {
+					eveningBuckets.get(i).add(topic);
+					remainDur -= topic.getDuration();
+					buffer.add(topic);
+				}
+			}
+
+			for (Topic topic : buffer) {
 				topics.remove(topic);
 			}
 		}
 
-		return false;
 	}
 
 	private List<List<Topic>> prepareEveningBuckets(int numTrack,
@@ -127,15 +157,8 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 				}
 			}
 		}
-		int remainingTime = 0;
-		if (topics.size() > 0) {
-			for (Topic topic : topics) {
-				remainingTime += topic.getDuration();
-			}
-		}
-		if (numTrack * BUFFER_TIME == remainingTime) {
-			return new ArrayList<List<Topic>>();
-		} else if (result.size() == numTrack) {
+
+		if (result.size() == numTrack) {
 			return result;
 		} else {
 			return null;
@@ -196,7 +219,7 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 			System.out.println("Morning session 9am -12pm");
 			List<Topic> morningSlot = trackList.get(i).getMorningBucket();
 			for (Topic topic : morningSlot) {
-				System.out.println(topic.getTitle() + "FOR"
+				System.out.println(topic.getTitle() + " FOR "
 						+ topic.getDuration() + "\n");
 			}
 			System.out.println("Lunch Break from 12pm -1pm \n");
@@ -204,7 +227,7 @@ public class ConfTrackerImpl implements ConfTrackerAPI {
 
 			List<Topic> eveningSlot = trackList.get(i).getEveningBucket();
 			for (Topic topic : eveningSlot) {
-				System.out.println(topic.getTitle() + "FOR"
+				System.out.println(topic.getTitle() + " FOR "
 						+ topic.getDuration() + "\n");
 			}
 			System.out.println("Networking session....");
