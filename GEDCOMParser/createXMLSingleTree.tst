@@ -1,0 +1,1 @@
+<gedcom><INDI id="@I1@"><NAME>Jamis Gordon /Buck/<SURN>Buck</SURN><GIVN>Jamis Gordon</GIVN></NAME><SEX>M</SEX></INDI></gedcom>
